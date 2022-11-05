@@ -13,7 +13,9 @@ class PokeAbilityData:
         # Get the data from the API.
         request = requests.get(self.url)
         # Raise an exception if the request failed.
-        
+        request.raise_for_status()
+        # Get the data from the request.
+        self.data = request.json()
 
     @staticmethod
     def __test_connection(name : str = "", url : str = "") -> int:
@@ -41,4 +43,5 @@ class PokeAbilityData:
             # All checks have passed, return 'Success' status code
             return 200
         except HTTPError as e:
+            # Return the status code of the failed connection.
             return e.response.status_code

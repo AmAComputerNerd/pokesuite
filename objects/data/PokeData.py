@@ -1,45 +1,167 @@
-from ctypes import Union
-from typing import Any, TypeVar
+from typing import Any
 import requests
 from requests.exceptions import HTTPError
 
 from objects.data.PokeAbilityData import PokeAbilityData
 
 class Logger:
-    def __init__(self, type : str, *args):
+    def __init__(self, type : str, default_level : str = 'type-dependant'):
         # TODO: this
         pass
 
     def get_type(self) -> str:
+        '''
+        Get the logging type of the Logger.
+
+        Valid types may be:
+            - 'console': Log to the console (default). Log level is by default 'error'.
+            - 'file': Log to a file. Log level is by default 'debug'.
+            - 'none': Do not log. Log level is by default 'none'. This is used mainly for cases where logging is not needed.
+        
+        Arguments:
+            None
+        Returns:
+            str: The logging type of the Logger.
+        '''
         # TODO: this
         return "Logger"
 
-    def set_type(self, type : str, *args):
+    def set_type(self, type : str, **kwargs):
+        '''
+        Change the logging type of the Logger.
+
+        Valid types may be:
+            - 'console': Log to the console (default). Log level is by default 'error'.
+            - 'file': Log to a file. Log level is by default 'debug'.
+            - 'none': Do not log. Log level is by default 'none'. This is used mainly for cases where logging is not needed.
+        
+        This method will also change the log level of the Logger to the default log level for the new logging type.
+        You can specify a log level to use with the new logging type by passing it as a keyword argument (e.g. `set_type('console', level='debug')`).
+
+        Arguments:
+            type (str): The new logging type of the Logger.
+            **kwargs: Keyword arguments.
+        Returns:
+            None
+        '''
         # TODO: this
         pass
 
-    def debug(self, msg):
+    def route(self, func : function, default_output : Any = None, raise_exceptions : bool = False, *args, **kwargs) -> Any:
+        '''
+        Route a function's output to the Logger.
+
+        The function will be executed and its output will be logged to the Logger.
+        Any arguments passed to the function will need to be passed to this method, using either positional or keyword arguments.
+
+        If a function returns normally, the output will be logged as an 'info' message and the function's return value (if any) will be returned.
+        If not enough arguments are passed to the function, an error will be logged under the 'warning' log level and no output, or a default value, will be returned.
+        If the function raises an exception, the exception will be logged under the 'error' log level, a None or default value will be returned, and the exception will be raised if `raise_exceptions` is True.
+
+        Arguments:
+            func (function): The function to route.
+            default_output (Any): The default output to return if the function raises an exception or does not return a value.
+            raise_exceptions (bool): Whether or not to raise exceptions raised by the function.
+            *args: Positional arguments to pass to the function.
+            **kwargs: Keyword arguments to pass to the function.
+        Returns:
+            Any: The output of the function, or a default value if the function raises an exception or does not return a value.
+        '''
         # TODO: this
         pass
 
-    def info(self, msg):
+    def debug(self, msg : str, force : bool = False):
+        '''
+        Send a debug message to the Logger.
+
+        Depending on the logging level of the Logger, this message may or may not be logged.
+        To force a message to be logged, change the 'force' keyword argument to True.
+
+        Arguments:
+            msg (str): The message to log.
+            force (bool): Whether or not to force the message to be logged.
+        Returns:
+            None
+        '''
         # TODO: this
         pass
 
-    def warn(self, msg):
+    def info(self, msg : str, force : bool = False):
+        '''
+        Send an info message to the Logger.
+
+        Depending on the logging level of the Logger, this message may or may not be logged.
+        To force a message to be logged, change the 'force' keyword argument to True.
+
+        Arguments:
+            msg (str): The message to log.
+            force (bool): Whether or not to force the message to be logged.
+        Returns:
+            None
+        '''
+        # TODO: this
+        pass
+
+    def warn(self, msg : str, force : bool = False):
+        '''
+        Send a warning message to the Logger.
+
+        Depending on the logging level of the Logger, this message may or may not be logged.
+        To force a message to be logged, change the 'force' keyword argument to True.
+
+        Arguments:
+            msg (str): The message to log.
+            force (bool): Whether or not to force the message to be logged.
+        Returns:
+            None
+        '''
         # TODO: this
         pass
     
-    def error(self, msg):
+    def error(self, msg : str, force : bool = False):
+        '''
+        Send an error message to the Logger.
+
+        Depending on the logging level of the Logger, this message may or may not be logged.
+        To force a message to be logged, change the 'force' keyword argument to True.
+
+        Arguments:
+            msg (str): The message to log.
+            force (bool): Whether or not to force the message to be logged.
+        Returns:
+            None
+        '''
         # TODO: this
         pass
 
     @staticmethod
     def default_logger():
+        '''
+        Retrieve the default logger.
+
+        The default logger is a Logger object with the logging type set to 'console' and the log level set to 'error'.
+
+        Arguments:
+            None
+        Returns:
+            Logger: The default logger (console).
+        '''
         return Logger("console")
 
+    @staticmethod
+    def no_logger():
+        '''
+        Retrieve a logger that does nothing. This should be used when the logger is not needed, in replacement of None.
+
+        Arguments:
+            None
+        Returns:
+            Logger: A logger that does nothing.
+        '''
+        return Logger("none")
+
 class PokeData:
-    def __init__(self, name : str = "", url : str = "", logger : Logger = None):  # type: ignore
+    def __init__(self, name : str = "", url : str = "", logger : Logger = Logger.no_logger()):  # type: ignore
         if name != "": self.url = "https://pokeapi.co/api/v2/pokemon/" + name
         elif url != "": self.url = url
         else: raise ValueError("Either name or url must be provided.")
@@ -49,9 +171,8 @@ class PokeData:
         # Get the data from the API.
         request = requests.get(self.url)
         # Raise an exception if the request fails.
-        if request.status_code != 200:
-            if logger != None: logger.error(f"Request failed with status code {str(request.status_code)}. Returned data is None-equivalent.")
-            self.data = {}
+        logger.route(request.raise_for_status)  # type: ignore
+        # Set the data.
         self.data : dict = request.json()
 
     def __raw_data(self) -> dict:
@@ -309,4 +430,5 @@ class PokeData:
             # All checks have passed, return 'Success' status code
             return 200
         except HTTPError as e:
+            # Return the status code of the failed connection.
             return e.response.status_code
