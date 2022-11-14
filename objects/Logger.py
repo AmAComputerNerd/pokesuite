@@ -1,7 +1,7 @@
 from typing import Any
 import datetime
 
-class bcolors:
+class DefaultColour:
     TEXT_INFO = '\033[95m'
     TEXT_HEADER = '\033[94m'
     DEBUG = '\033[96m'
@@ -154,9 +154,9 @@ class Logger:
                 raise
             return default_output
         if output is None:
-            self.debug(f"Function '{func.__name__}' returned None")
+            self.info(f"Function '{func.__name__}' returned None. Default output ({default_output}) will be returned.")
             return default_output
-        self.debug(f"Function '{func.__name__}' returned '{output}'")
+        self.info(f"Function '{func.__name__}' returned {output}")
         return output
 
     def debug(self, msg : str, force : bool = False):
@@ -174,7 +174,7 @@ class Logger:
         '''
         # Firstly, check the log level to see if the message should be logged.
         if self.__level_check('debug') or force:
-            self.__write(f"[{datetime.datetime.now()}] DEBUG ) {msg}", bcolors.DEBUG)
+            self.__write(f"[{datetime.datetime.now()}] DEBUG ) {msg}", DefaultColour.DEBUG)
         # If the message should not be logged, do nothing.
         return
 
@@ -193,7 +193,7 @@ class Logger:
         '''
         # Firstly, check the log level to see if the message should be logged.
         if self.__level_check('info') or force:
-            self.__write(f"[{datetime.datetime.now()}] INFO  ) {msg}", bcolors.INFO)
+            self.__write(f"[{datetime.datetime.now()}] INFO  ) {msg}", DefaultColour.INFO)
         # If the message should not be logged, do nothing.
         return
 
@@ -212,7 +212,7 @@ class Logger:
         '''
         # Firstly, check the log level to see if the message should be logged.
         if self.__level_check('warn') or force:
-            self.__write(f"[{datetime.datetime.now()}] WARN  ) {msg}", bcolors.WARNING)
+            self.__write(f"[{datetime.datetime.now()}] WARN  ) {msg}", DefaultColour.WARNING)
         # If the message should not be logged, do nothing.
         return
     
@@ -231,7 +231,7 @@ class Logger:
         '''
         # Firstly, check the log level to see if the message should be logged.
         if self.__level_check('error') or force:
-            self.__write(f"[{datetime.datetime.now()}] ERROR ) {msg}", bcolors.FAIL)
+            self.__write(f"[{datetime.datetime.now()}] ERROR ) {msg}", DefaultColour.FAIL)
         # If the message should not be logged, do nothing.
         return
 
@@ -248,7 +248,7 @@ class Logger:
         '''
         if self.type == 'console':
             # Simply print the message to the console.
-            print(f"{colour}{msg}{bcolors.ENDC}")
+            print(f"{colour}{msg}{DefaultColour.ENDC}")
         elif self.type == 'file':
             # Open the file and write the message to it. No colouring is done.
             with open(self.path, 'a') as f:

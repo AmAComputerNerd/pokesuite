@@ -18,7 +18,7 @@ class PokeAbilityData:
         self.data = request.json()
 
     @staticmethod
-    def __test_connection(name : str = "", url : str = "") -> int:
+    def test_connection(name : str = "", url : str = "") -> int:
         '''
         Test the connection to the PokeAPI.
 

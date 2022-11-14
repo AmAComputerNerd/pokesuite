@@ -20,7 +20,7 @@ class PokeData:
         # Set the data.
         self.data : dict = request.json()
 
-    def __raw_data(self) -> dict:
+    def _raw_data(self) -> dict:
         '''
         Returns the raw data from the API.
 
@@ -33,7 +33,7 @@ class PokeData:
         '''
         return self.data
 
-    def __get_data(self, key : str, default_return = None) -> Any:
+    def _get_data(self, key : str, default_return = None) -> Any:
         '''
         Retrieve data from the API.
 
@@ -56,7 +56,7 @@ class PokeData:
         Returns:
             str: The name of the Pokemon.
         '''
-        return self.__get_data("name", "Unknown")
+        return self._get_data("name", "Unknown")
 
     def get_internal_id(self) -> int:
         '''
@@ -67,7 +67,7 @@ class PokeData:
         Returns:
             int: The internal ID of the Pokemon.
         '''
-        return self.__get_data("id", -1)
+        return self._get_data("id", -1)
 
     def get_height(self) -> float:
         '''
@@ -78,7 +78,7 @@ class PokeData:
         Returns:
             int: The height of the Pokemon.
         '''
-        return self.__get_data("height", -1)
+        return self._get_data("height", -1)
     
     def get_weight(self) -> float:
         '''
@@ -89,7 +89,7 @@ class PokeData:
         Returns:
             int: The weight of the Pokemon.
         '''
-        return self.__get_data("weight", -1)
+        return self._get_data("weight", -1)
 
     def get_sorting_priority(self) -> int:
         '''
@@ -103,7 +103,7 @@ class PokeData:
         Returns:
             int: The sorting priority of the Pokemon.
         '''
-        return self.__get_data("order", -1)
+        return self._get_data("order", -1)
 
     def get_abilities(self, slots : list = [], names : list = [], limit : int = -1) -> list:
         '''
@@ -125,7 +125,7 @@ class PokeData:
         limit = limit if limit > 0 else -1
 
         # TODO: Test this.
-        abilities = self.__get_data("abilities", [])
+        abilities = self._get_data("abilities", [])
         if len(slots) != 0:
             abilities = [ability for ability in abilities if ability.get("slot", -1) in slots]
         if len(names) != 0:
@@ -154,7 +154,7 @@ class PokeData:
         names = [name.lower().replace(" ", "-") for name in names if name != "" and type(name) == str]
         limit = limit if limit > 0 else -1
 
-        moves = self.__get_data("moves", [])
+        moves = self._get_data("moves", [])
         # TODO: Implement functionality for PokeMoveData.
         return moves
         
@@ -174,7 +174,7 @@ class PokeData:
         Returns:
             list: The forms of the Pokemon.
         '''
-        forms = self.__get_data("forms", [])
+        forms = self._get_data("forms", [])
         if len(names) != 0:
             forms = [form for form in forms if form.get("name", "") in names]
         if limit != -1:
@@ -206,8 +206,8 @@ class PokeData:
         Returns:
             dict: The URLs to the sprites of the Pokemon.
         '''
-        if len(other_category) != 0: sprites : dict = self.__get_data("sprites", {}).get("other", {}).get(other_category, {})
-        else: sprites : dict = self.__get_data("sprites", {})
+        if len(other_category) != 0: sprites : dict = self._get_data("sprites", {}).get("other", {}).get(other_category, {})
+        else: sprites : dict = self._get_data("sprites", {})
 
         toReturn = {}
         for key in sprites.keys():
@@ -232,7 +232,7 @@ class PokeData:
         '''
         stats = [stat.lower().replace(" ", "-") for stat in stats if stat != "" and type(stat) == str]
         toReturn = {}
-        for stat in self.__get_data("stats", []):
+        for stat in self._get_data("stats", []):
             if len(stats) != 0 and stat.get("stat", {}).get("name", "") not in stats: continue
             toReturn[stat.get("stat", {}).get("name", "")] = stat.get("base_stat", 0)
         return toReturn
@@ -247,10 +247,10 @@ class PokeData:
         Returns:
             list: The default types of the Pokemon.
         '''
-        return [type.get("type", {}).get("name", "") for type in self.__get_data("types", [])]
+        return [type.get("type", {}).get("name", "") for type in self._get_data("types", [])]
 
     @staticmethod
-    def __test_connection(name : str = "", url : str = "") -> int:
+    def test_connection(name : str = "", url : str = "") -> int:
         '''
         Test the connection to the PokeAPI.
 

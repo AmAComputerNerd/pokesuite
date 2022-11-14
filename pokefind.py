@@ -14,7 +14,11 @@ except ImportError:
 running = True
 
 def script():
-    pass
+    # Do some testing.
+    print(search(data={"pokemon": "pikachu"}))
+    print(search(data={"pokemon": "pikachu"}, search_type="pokemon"))
+    print(search(data={"pokemon": "pikachu"}, search_type="ability"))
+    print(search(data={"ability": "static"}, search_type="ability"))
 
 def search(data : dict, search_type : str = "") -> PokeData | PokeAbilityData | str:
     '''
@@ -55,17 +59,17 @@ def search(data : dict, search_type : str = "") -> PokeData | PokeAbilityData | 
     
     # Now that we have the search type, we can search for the data.
     if search_type == "pokemon":
-        return __search_pokemon(name=data.get("pokemon", ""))
+        return _search_pokemon(name=data.get("pokemon", ""))
     elif search_type == "ability":
-        return __search_ability(name=data.get("ability", ""))
+        return _search_ability(name=data.get("ability", ""))
     elif search_type == "item":
-        return __search_item(name=data.get("item", ""))
+        return _search_item(name=data.get("item", ""))
     elif search_type == "move":
-        return __search_move(name=data.get("move", ""))
+        return _search_move(name=data.get("move", ""))
     # Invalid or unimplemented search type.
     return "Invalid search."
 
-def __search_pokemon(name : str, data : dict = {}) -> PokeData | str:
+def _search_pokemon(name : str, data : dict = {}) -> PokeData | str:
     '''
     Search for a pokemon.
 
@@ -80,7 +84,7 @@ def __search_pokemon(name : str, data : dict = {}) -> PokeData | str:
         Union: The data that was searched for. This will be returned as a PokeData object. If the data is not found or an internet connection cannot be established, the function will return a string containing the error message.
     '''
     # Check if an internet connection can be established.
-    if PokeData.__test_connection(name=name) != 200:
+    if PokeData.test_connection(name=name) != 200:
         return "No internet connection."
     # An internet connection is available. We can now search for the pokemon.
     try:
@@ -90,7 +94,7 @@ def __search_pokemon(name : str, data : dict = {}) -> PokeData | str:
     # The pokemon was found. We can now return the data.
     return pokemon
 
-def __search_ability(name : str, data : dict = {}) -> PokeAbilityData | str:
+def _search_ability(name : str, data : dict = {}) -> PokeAbilityData | str:
     '''
     Search for an ability.
 
@@ -105,7 +109,7 @@ def __search_ability(name : str, data : dict = {}) -> PokeAbilityData | str:
         Union: The data that was searched for. This will be returned as a PokeAbilityData object. If the data is not found or an internet connection cannot be established, the function will return a string containing the error message.
     '''
     # Check if an internet connection can be established.
-    if PokeAbilityData.__test_connection(name=name) != 200:
+    if PokeAbilityData.test_connection(name=name) != 200:
         return "No internet connection."
     # An internet connection is available. We can now search for the ability.
     try:
@@ -115,10 +119,10 @@ def __search_ability(name : str, data : dict = {}) -> PokeAbilityData | str:
     # The ability was found. We can now return the data.
     return ability
 
-def __search_item(name : str, data : dict = {}) -> Any:
+def _search_item(name : str, data : dict = {}) -> Any:
     pass
 
-def __search_move(name : str, data : dict = {}) -> Any:
+def _search_move(name : str, data : dict = {}) -> Any:
     pass
 
 # If this file is ran standalone, run the script() function automagicly.
