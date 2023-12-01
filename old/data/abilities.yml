@@ -1,0 +1,299 @@
+############################################################
+# +------------------------------------------------------+ #
+# |                     Abilities                        | #
+# +------------------------------------------------------+ #
+############################################################
+
+# This file is dedicated to ability logic and implementations.
+# As of now, there are 0 total abilities implemented within this file.
+# You may also create your own abilities, for this, read the documentation below.
+
+############################################################
+# +------------------------------------------------------+ #
+# |                    ReadTheDocs                       | #
+# +------------------------------------------------------+ #
+############################################################
+
+#####################
+#     Beginners     #
+#####################
+
+# NOTE: All basic math functions are included as implemented within the Python language:
+#     ADD (+):
+#         Add two values together.
+#       Format: value1 + value2
+#     SET-ADD (+=):
+#         Add two values together, and set the resulting sum as the new value of `value1`.
+#       Format: value1 += value2
+#     SUBTRACT (-):
+#         Subtract a value from another.
+#       Format: value1 - value2
+#     SET-SUBTRACT (-=):
+#         Subtract a value from another, and set the result as the new value of `value1`.
+#       Format: value1 -= value2
+#     MULTIPLY (*):
+#         Multiply two values together.
+#       Format: value1 * value2
+#     SET-MULTIPLY (*=):
+#         Multiply two values together, and set the result as the new value of `value1`.
+#       Format: value1 *= value2
+#     DIVIDE (/):
+#         Divide a value from another.
+#       Format: value1 / value2
+#     SET-DIVIDE (/=):
+#         Divide a value from another, and set the result as the new value of `value1`.
+#       Format: value1 /= value2
+#     REMAINDER (%):
+#         Divide a value from another, but get the remainder of this equation.
+#       Format: value1 % value2
+#     SET-REMAINDER (%=):
+#         Divide a value from another, but get the remainder of this equation and set this result to be the new value of `value1`.
+#       Format: value1 %= value2
+#     EQUALS (==):
+#         Check whether a value is equal to another.
+#       Format: value1 == value2
+#     LESS-THAN (<):
+#         Check if a value is less than another.
+#       Format: value1 < value2
+#     LESS-THAN-EQUAL (<=):
+#         Check if a value is less than or equal to another.
+#       Format: value1 <= value2
+#     GREATER-THAN (>):
+#         Check if a value is greater than another.
+#       Format: value1 > value2
+#     GREATER-THAN-EQUAL (>=):
+#         Check if a value is greater than or equal to another.
+#       Format: value1 >= value2
+#
+# -----------------------------
+#
+# Basic operators: these refer to basic operations that control the flow of a program.
+#     IF:
+#         The `if` operator allows for comparable actions and checks that even enable the
+#         usage of your ability as a whole. It can be used further for multi-action abilities,
+#         where differing actions, i.e. based on user's current HP, can be implemented.
+#
+#       Format: IF(condition) THEN {statement}
+#       Example: IF(user_max_hp == 5) THEN {SET user_max_hp 60}
+#
+#     LOOP:
+#         The `loop` operator enables easy looping possibilities, preventing otherwise essential
+#         `if` and `goto` statements by looping over all statements within it's bounds until the loop
+#         is terminated. By using Format 2, the iteration number can also be kept track of within
+#         a new variable, referable to through the provided name.
+#
+#       Format: LOOP {...}
+#       Format2: LOOP(var_name) {...}
+#       Example: LOOP {
+#                   user_max_hp -= 5
+#                   IF(user_max_hp <= 10) THEN {
+#                       BREAK
+#                   }
+#                }
+#       Example2: LOOP(iter) {
+#                    IF(iter > 5) THEN {
+#                        BREAK
+#                    }
+#                    user_max_hp -= 5
+#                 }
+#
+#     SET:
+#         The `set` operator allows the manipulation of variables. This is an essential aspect
+#         in almost every ability, as it allows the external modification of game variables like
+#         `user_current_hp`. Two differing formats are provided for literal numbers (Format 1)
+#         and calculated numbers / variables (Format 2).
+#
+#       Format: SET value newValue
+#       Format2: SET value (calculatedValue)
+#       Example: SET user_max_hp 50
+#       Example2: SET user_max_hp (user_current_hp / 2)
+#
+#     GOTO:
+#         The `goto` operator redirects the program back to the specified line. It is important
+#         to note that the line number is relative to that WITHIN the ability's codespace. This
+#         means that if the statement `GOTO 113` would be used here to return to the previous
+#         line, an exception would be thrown. Instead, the correct usage of this statement here
+#         would be `GOTO 2`, as we were attempting to refer to the second line within this codespace/
+#         category.
+#
+#       Format: GOTO lineNumber
+#       Example: user_current_hp += 5
+#                IF(user_current_hp > user_max_hp) THEN {RETURN}
+#                GOTO 1
+#
+# -----------------------------
+#
+# Special keywords: these refer to protected keywords that still complete an action, but have
+# special rules associated with their usage that need to be discussed.
+#     RETURN:
+#         The `return` keyword will immediately halt execution of the ability, and return
+#         control back to the script. This is particularly useful for 'guard clouses', in
+#         practicle speak, an `if` statement to eliminate possibilities. See below for an
+#         example on how this works. By using Format 2, a value can be returned to the script.
+#
+#       Format: RETURN
+#       Format2: RETURN (value)
+#       Example: IF(user_current_hp <= 0) THEN {RETURN}
+#                user_current_hp -= 5         <- This statement will never be executed if `user_current_hp` is 0.
+#       Example2: RETURN (user_current_hp % 8)
+#
+#     BREAK:
+#         The `break` keyword is very similar to `return`, except this keyword will immediately
+#         break out of any `loop` or `if` statement it is called in. This is particularly handy
+#         in cases where a `loop` is being used to find a value, and thus `break` can be called
+#         when the value is located.
+#
+#       Format: BREAK
+#       Example: LOOP(iter) {
+#                 SET effect (GET_EFFECT(iter))
+#                 IF(CONTAINS(user_effects, effect)) THEN {BREAK}
+#                }
+#
+#     WAIT:
+#         The `wait` function enables the selective activation of abilities at specific points
+#         within the battle. Using keywords (see below), execution of this ability will "wait"
+#         until the battle stage is one defined within the parameters of the function.
+#
+#         Keywords (if multiple, seperate with a comma and space):
+#            summon: Executes ONCE, when the Pokemon is summoned.
+#            pre_turn: Executes ONCE, just before trainers' can take their moves.
+#            pre_user_damage: Executes ONCE, just before the user's Pokemon has it's damage calculated and move executed.
+#            pre_target_damage: Executes ONCE, just before the target's Pokemon has it's damage calculated and move executed.
+#            pre_effect_tick: Executes ONCE, just before effects can "tick" and after each Pokemon has made their move.
+#            pre_field_tick: Executes ONCE, just before any active field effects can "tick" and after status effects have ticked / caused damage.
+#            pre_next_turn: Executes ONCE, just before the next turn begins. This is the last event in a turn-timeline.
+#
+#       Format: WAIT("keyword")
+#       Example: WAIT("pre_turn", "pre_user_damage")
+#
+#     DISPLAY:
+#         The `display` function will display any entered text into the CONSOLE, during the stage when
+#         the ability triggers and succeeds. It supports string concentration using the `+` symbol.
+#
+#       Format: DISPLAY("message")
+#       Example: DISPLAY(user_name + " is pretty cool!")       <- Output (using Mew): Mew is pretty cool!
+
+adaptability:
+  1: WAIT("pre_user_damage")
+     # Check for STAB elegibility
+  2: IF(user_move_type == user_type) THEN {
+        # Add an extra 50% bonus to the (stab) multiplier, which simulates this move's 2x STAB damage
+  3:    SET user_move_damage-multiplier (user_move_damage-multiplier + 0.5)
+  4:    DISPLAY(user_name + "'s Adaptability activated, setting the STAB multiplier for " + user_move_name + " to '2x'!")
+  5: }
+  6: RETURN
+
+aerilate:
+  1: WAIT("pre_user_damage")
+     # Check move types.
+  2: IF(user_move_type == "normal") THEN {
+  3:    SET user_move_type "flying"
+  4:    DISPLAY(user_name + "'s Aerilate activated, changing the type of " + user_move_name + " to 'Flying'!")
+  5: }
+  6: RETURN
+
+aftermath:
+  1: WAIT("pre_next_turn")
+     # Check for current HP.
+  2: IF(user_current_hp <= 0) THEN {
+        # Check for Damp ability - neglects this ability and prevents it from activating.
+  3:    IF(target_ability_name == "damp") THEN {
+  4:        DISPLAY(user_name + "'s Aftermath tried to activate, but it failed due to " + target_name + "'s Damp!")
+  5:        RETURN
+  6:    }
+        # No Damp ability in sight - activate Aftermath and remove 1/4 of the target's current health (out of maximum health).
+  7:    SET target_current_hp (target_current_hp - (target_max_hp/4))
+  8:    DISPLAY(user_name + "'s Aftermath activated, damaging it's attacker by 25% of their maximum health!")
+  9: }
+  10: RETURN
+
+airlock:
+  1: WAIT("pre_turn")
+     # If there isn't any weather effect on-field, then do nothing
+  2: IF(game_field_effect == "none") THEN {RETURN}
+  3: SET game_field_effect "none"
+  4: DISPLAY(user_name + "'s Airlock activated, removing all weather effects and preventing the trigger of Weather Moves!")
+  5: RETURN
+
+analytic:
+  1: WAIT("pre_user_damage")
+     # Check to see if the target has already moved.
+  2: IF(target_move == "none") THEN {RETURN}
+     # Add extra damage.
+  3: SET user_move_damage-multiplier (user_move_damage-multiplier + 0.3)
+  4: DISPLAY(user_name + "'s Analytic activated, increasing the damage of " + user_move_name + " by 30%!")
+  5: RETURN
+
+anger_point:
+  1: WAIT("pre_effect_tick")
+     # Check to see if the last hit was a critical.
+  2: IF(target_move_crit) THEN {
+  3:    APPLY user ("attack", 6)
+  4:    DISPLAY(user_name + "'s Anger Point activated, increasing it's attack by 6 stages!")
+  5: }
+  6: RETURN
+
+anticipation:
+  # TODO
+  1: WAIT("summon")
+  2: DISPLAY(user_name + "'s Anticipation tried to activate, but failed as the ability was not implemented (cringe).")
+  3: RETURN
+
+arena_trap:
+  1: WAIT("pre_target_damage")
+     # Check for RUN move.
+  2: IF(target_move_name == "RUN") THEN {
+        # Check for Flying type - TODO: Implement logic for other exceptions, i.e. Levitate, Magnet Rise or Telekinesis.
+  3:    IF(target_type == "flying") THEN {
+  4:        DISPLAY(user_name + "'s Arena Trap tried to activate, but failed due to " + target_name + "'s Flying type!")
+  5:        RETURN
+  6:    }
+        # Opponent is not under any preventing effects, so activate Arena Trap and cancel the target's move.
+  7:    CANCEL(target_move)
+  8:    DISPLAY(user_name + "'s Arena Trap activated, preventing " + target_name + " from escaping!")
+  9: }
+  10: RETURN
+
+aroma_viel:
+  # TODO
+  1: WAIT("pre_target_damage")
+  2: DISPLAY(user_name + "'s Aroma Veil tried to activate, but failed as the ability was not implemented (cringe).")
+  3: RETURN
+
+as_one:
+  # TODO
+  1: WAIT("summon")
+  2: DISPLAY(user_name + "'s As One tried to activate, but failed as the ability was not implemented (cringe).")
+  3: RETURN
+
+aura_break:
+  1: WAIT("summon", "pre_turn")
+  2: LOOP(iter) {
+  3:    var opponent
+  4:    SET opponent (GET(target, iter))
+  5:    IF(opponent_ability_name == "fairy aura") THEN {
+  6:        CANCEL(opponent_ability)
+  7:        DISPLAY(user_name + "'s Aura Break activated, cancelling " + opponent_name + "'s Fairy Aura!")
+  8:    }
+  9:    IF(opponent_ability_name == "dark aura") THEN {
+  10:       CANCEL(opponent_ability)
+  11:       DISPLAY(user_name + "'s Aura Break activated, cancelling " + opponent_name + "'s Dark Aura!")
+  12:   }
+  13:   APPLY opponent ("dark_power", -0.25)
+  14:   APPLY opponent ("fairy_power", -0.25)
+  15: }
+  16: LOOP(iter) {
+  17:     var pokemon
+  18:     SET pokemon (GET(user, iter))
+  19:     APPLY pokemon ("dark_power", -0.25)
+  20:     APPLY pokemon ("fairy_power", -0.25)
+  21: }
+  22: DISPLAY(user_name + "'s Aura Break has reduced the effectiveness of all Dark and Fairy moves by 25%!")
+  23: RETURN
+
+bad_dreams:
+  1: WAIT("pre_next_turn")
+  2: LOOP(iter) {
+  3:    var opponent
+  4:    SET opponent (GET(target, iter))
+  5:    IF(opponent_)

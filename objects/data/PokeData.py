@@ -6,7 +6,7 @@ from objects.data.PokeAbilityData import PokeAbilityData
 from objects.Logger import Logger
 
 class PokeData:
-    def __init__(self, name : str = "", url : str = "", logger : Logger = Logger.no_logger()):  # type: ignore
+    def __init__(self, name : str = "", url : str = "", logger : Logger = Logger.no_logger()):
         if name != "": self.url = "https://pokeapi.co/api/v2/pokemon/" + name
         elif url != "": self.url = url
         else: raise ValueError("Either name or url must be provided.")

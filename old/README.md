@@ -1,0 +1,2 @@
+# PokeSuite v1
+These files are from version 1 of PokeSuite which was never uploaded to GitHub. I made the choice to remake the script before completing v1, but I thought it valuable to include the original files within the GitHub repository as they contain vastly more logic than the remake. It is important to note that although the logic is essentially entirely implemented, it isn't currently functional due to a circular import error within data files.

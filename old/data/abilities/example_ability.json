@@ -1,0 +1,23 @@
+{
+    "names": [
+        {
+            "name": "Example Ability",
+            "language": "en"
+        },
+        {
+            "name": "Habilidad de ejemplo",
+            "language": "es"
+        }
+    ],
+
+    "descriptions": [
+        {
+            "description": "This is an example ability.",
+            "language": "en"
+        },
+        {
+            "description": "Esta es una habilidad de ejemplo.",
+            "language": "es"
+        }
+    ]
+}
