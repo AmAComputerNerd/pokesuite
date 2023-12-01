@@ -1,0 +1,31 @@
+{
+    "name": "example_move",
+    "names": [
+        {
+            "name": "Example Move",
+            "lang": "en"
+        },
+        {
+            "name": "Ejemplo de movimiento",
+            "lang": "es"
+        }
+    ],
+    "effect_entries": [
+        {
+            "effect": "This is a long description of the move. You can use the \\f and \\n escape characters to make a new line and a new paragraph, respectively.",
+            "short_effect": "This is a short description of the move.",
+            "lang": "en"
+        },
+        {
+            "effect": "Esta es una descripción larga del movimiento. Puede usar los caracteres de escape \\f y \\n para hacer una nueva línea y un nuevo párrafo, respectivamente.",
+            "short_effect": "Esta es una descripción corta del movimiento.",
+            "lang": "es"
+        }
+    ],
+    "power": 35,
+    "pp": 15,
+    "accuracy": 100,
+    "priority": 0,
+    "type": "normal",
+    "target": "opponent"
+}
